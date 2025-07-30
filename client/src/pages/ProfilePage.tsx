@@ -1,8 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { User, Brain, FileText, TrendingUp, Clock, RefreshCw, AlertCircle, Phone, Check, Send } from 'lucide-react';
-import axios from 'axios';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../hooks/useAuth';
-import { toast } from 'react-hot-toast';
+import { 
+  User, 
+  Phone, 
+  FileText, 
+  Brain, 
+  TrendingUp, 
+  RefreshCw,
+  CheckCircle,
+  Clock,
+  AlertTriangle,
+  ArrowRight
+} from 'lucide-react';
+import axios from 'axios';
+import toast from 'react-hot-toast';
 
 interface UserStats {
   analysesCount: number;
@@ -50,12 +61,14 @@ const ProfilePage: React.FC = () => {
   
   // Состояния для реальных данных
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [userStats, setUserStats] = useState<UserStats>({
     analysesCount: 0,
     formsCount: 0,
     averageConfidence: 0
   });
   const [forms, setForms] = useState<Form[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [analyses, setAnalyses] = useState<Analysis[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -70,6 +83,7 @@ const ProfilePage: React.FC = () => {
   const [sendingSms, setSendingSms] = useState(false);
   const [confirmingSms, setConfirmingSms] = useState(false);
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case 'high': return 'text-red-600 bg-red-50';
@@ -79,6 +93,7 @@ const ProfilePage: React.FC = () => {
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const getPriorityText = (priority: string) => {
     switch (priority) {
       case 'high': return 'Высокий';
@@ -89,7 +104,7 @@ const ProfilePage: React.FC = () => {
   };
 
   // Функции для загрузки данных
-  const loadUserStats = async () => {
+  const loadUserStats = useCallback(async () => {
     try {
       const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
       const token = localStorage.getItem('token');
@@ -116,9 +131,9 @@ const ProfilePage: React.FC = () => {
       // console.error('Ошибка загрузки статистики:', error);
       setError('Не удалось загрузить статистику');
     }
-  };
+  }, []);
 
-  const loadUserProfile = async () => {
+  const loadUserProfile = useCallback(async () => {
     try {
       const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
       const token = localStorage.getItem('token');
@@ -141,9 +156,9 @@ const ProfilePage: React.FC = () => {
       // console.error('Ошибка загрузки профиля:', error);
       setError('Не удалось загрузить профиль');
     }
-  };
+  }, []);
 
-  const loadAllForms = async () => {
+  const loadAllForms = useCallback(async () => {
     try {
       const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
       const token = localStorage.getItem('token');
@@ -153,7 +168,7 @@ const ProfilePage: React.FC = () => {
         return;
       }
 
-      const response = await axios.get(`${apiUrl}/users/all-forms`, {
+      const response = await axios.get(`${apiUrl}/forms`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -163,12 +178,12 @@ const ProfilePage: React.FC = () => {
         setForms(response.data.forms);
       }
     } catch (error) {
-      // console.error('Ошибка загрузки всех форм:', error);
+      // console.error('Ошибка загрузки форм:', error);
       setError('Не удалось загрузить формы');
     }
-  };
+  }, []);
 
-  const loadUserAnalyses = async () => {
+  const loadUserAnalyses = useCallback(async () => {
     try {
       const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
       const token = localStorage.getItem('token');
@@ -191,10 +206,10 @@ const ProfilePage: React.FC = () => {
       // console.error('Ошибка загрузки анализов:', error);
       setError('Не удалось загрузить анализы');
     }
-  };
+  }, []);
 
   // Функция для обновления данных
-  const refreshData = async () => {
+  const refreshData = useCallback(async () => {
     setRefreshing(true);
     await Promise.all([
       loadUserProfile(),
@@ -203,7 +218,7 @@ const ProfilePage: React.FC = () => {
       loadUserAnalyses()
     ]);
     setRefreshing(false);
-  };
+  }, [loadUserProfile, loadUserStats, loadAllForms, loadUserAnalyses]);
 
   // Функция для повторной отправки анализа
   const retryAnalysis = async (formId: string) => {
@@ -389,7 +404,7 @@ const ProfilePage: React.FC = () => {
     if (user) {
       loadData();
     }
-  }, [user]);
+  }, [user, loadUserProfile, loadUserStats, loadAllForms, loadUserAnalyses]);
 
   // Автообновление каждые 30 секунд если есть pending анализы
   useEffect(() => {
@@ -403,7 +418,7 @@ const ProfilePage: React.FC = () => {
 
       return () => clearInterval(interval);
     }
-  }, [forms]);
+  }, [forms, refreshData]);
 
   if (loading) {
     return (
@@ -528,7 +543,7 @@ const ProfilePage: React.FC = () => {
                       <span>{userProfile.phone}</span>
                       {userProfile.phoneVerified && (
                         <div className="flex items-center space-x-1 text-green-600">
-                          <Check size={16} />
+                          <CheckCircle size={16} />
                           <span className="text-sm">Подтвержден</span>
                         </div>
                       )}
@@ -540,7 +555,7 @@ const ProfilePage: React.FC = () => {
                         disabled={sendingSms}
                         className="text-primary-600 hover:text-primary-700 text-sm font-medium flex items-center space-x-1"
                       >
-                        <Send size={14} />
+                        <ArrowRight size={14} />
                         <span>{sendingSms ? 'Отправляем...' : 'Подтвердить'}</span>
                       </button>
                     )}
@@ -591,7 +606,7 @@ const ProfilePage: React.FC = () => {
               {showSmsForm && (
                 <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg space-y-3">
                   <div className="flex items-center space-x-2 text-blue-800">
-                    <Send size={16} />
+                    <ArrowRight size={16} />
                     <span className="font-medium">Подтвердите номер телефона</span>
                   </div>
                   <p className="text-sm text-blue-700">
@@ -681,7 +696,7 @@ const ProfilePage: React.FC = () => {
                         </>
                       ) : (
                         <>
-                          <AlertCircle size={14} />
+                          <AlertTriangle size={14} />
                           <span>Повторить</span>
                         </>
                       )}

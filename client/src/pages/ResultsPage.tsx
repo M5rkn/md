@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import axios from 'axios';
@@ -47,13 +47,7 @@ const ResultsPage: React.FC = () => {
 
   const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
 
-  useEffect(() => {
-    if (formId) {
-      loadResults();
-    }
-  }, [formId]);
-
-  const loadResults = async () => {
+  const loadResults = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -81,7 +75,13 @@ const ResultsPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [formId, apiUrl, token, navigate]);
+
+  useEffect(() => {
+    if (formId) {
+      loadResults();
+    }
+  }, [formId, loadResults]);
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
