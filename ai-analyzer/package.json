@@ -1,0 +1,15 @@
+{
+  "name": "medical-aggregator-ai",
+  "version": "1.0.0",
+  "description": "AI Service for Medical Aggregator",
+  "main": "main.py",
+  "scripts": {
+    "start": "uvicorn main:app --host 0.0.0.0 --port 8000",
+    "dev": "uvicorn main:app --reload --host 0.0.0.0 --port 8000",
+    "build": "pip install -r requirements.txt"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  }
+} 
