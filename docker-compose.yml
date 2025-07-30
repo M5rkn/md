@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  # PostgreSQL база данных
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: medical_aggregator
+      POSTGRES_USER: medical_user
+      POSTGRES_PASSWORD: medical_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U medical_user -d medical_aggregator"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend сервер
+  server:
+    build: ./server
+    environment:
+      DATABASE_URL: postgresql://medical_user:medical_password@postgres:5432/medical_aggregator
+      JWT_SECRET: your-super-secret-jwt-key-change-in-production
+      PORT: 3001
+      NODE_ENV: production
+      CLIENT_URL: http://localhost:3000
+    ports:
+      - "3001:3001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./server/uploads:/app/uploads
+
+  # AI сервис
+  ai-service:
+    build: ./ai-analyzer
+    environment:
+      DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:-}
+      DEEPSEEK_MODEL: deepseek-chat
+      DEEPSEEK_MAX_TOKENS: 4000
+      DEEPSEEK_TEMPERATURE: 0.7
+      DEEPSEEK_TIMEOUT: 60
+      DEBUG: false
+    ports:
+      - "8000:8000"
+    depends_on:
+      - server
+
+  # Frontend клиент
+  client:
+    build: ./client
+    environment:
+      REACT_APP_API_URL: http://localhost:3001/api
+      REACT_APP_AI_API_URL: http://localhost:8000
+    ports:
+      - "3000:80"
+    depends_on:
+      - server
+      - ai-service
+
+volumes:
+  postgres_data: 

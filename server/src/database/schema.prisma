@@ -1,0 +1,204 @@
+// Конфигурация Prisma для медицинского агрегатора
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Роли пользователей
+enum UserRole {
+  USER
+  ADMIN
+  DOCTOR
+  MODERATOR
+}
+
+
+
+// Статусы консультаций
+enum ConsultationStatus {
+  SCHEDULED
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+}
+
+// Пользователи системы
+model User {
+  id        String   @id @default(cuid())
+  name      String?
+  email     String   @unique
+  password  String
+  role      UserRole @default(USER)
+  
+  // Поля телефона
+  phone           String?   @unique
+  phoneVerified   Boolean   @default(false) @map("phone_verified")
+  phoneVerifiedAt DateTime? @map("phone_verified_at")
+  
+  // Флаг первой консультации
+  hasConsultation Boolean   @default(false) @map("has_consultation")
+  
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Связи
+  forms           Form[]
+  userSessions    UserSession[]
+  phoneVerifications PhoneVerification[]
+  consultationLogs ConsultationLog[]
+  consultations   Consultation[]
+
+  @@map("users")
+}
+
+// Сессии пользователей
+model UserSession {
+  id           String   @id @default(cuid())
+  userId       String   @map("user_id")
+  refreshToken String   @unique @map("refresh_token")
+  expiresAt    DateTime @map("expires_at")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  // Связи
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_sessions")
+}
+
+// Верификация телефонов через SMS
+model PhoneVerification {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  phone     String   
+  codeHash  String   @map("code_hash") // Хэш SHA256 SMS кода для безопасности
+  smsId     String?  @map("sms_id")    // ID SMS от провайдера
+  verified  Boolean  @default(false)
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Связи
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("phone_verifications")
+  @@index([userId])
+  @@index([phone])
+  @@index([codeHash])
+}
+
+// Лог бесплатных консультаций
+model ConsultationLog {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  phone     String   
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Связи
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("consultation_logs")
+  @@index([userId])
+  @@index([phone])
+  @@index([createdAt])
+}
+
+// Записи на консультации
+model Consultation {
+  id          String             @id @default(cuid())
+  userId      String             @map("user_id")
+  formId      String?            @map("form_id") // Связь с анкетой
+  date        DateTime
+  time        String             // Время в формате "HH:MM"
+  status      ConsultationStatus @default(SCHEDULED)
+  price       Decimal            @db.Decimal(10, 2) // Цена консультации
+  isFirst     Boolean            @default(false) @map("is_first") // Первая консультация
+  notes       String?            // Заметки врача
+  meetingLink String?            @map("meeting_link") // Ссылка на онлайн встречу
+  createdAt   DateTime           @default(now()) @map("created_at")
+  updatedAt   DateTime           @updatedAt @map("updated_at")
+
+  // Связи
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  form Form? @relation(fields: [formId], references: [id], onDelete: SetNull)
+
+  @@map("consultations")
+  @@index([userId])
+  @@index([date])
+  @@index([status])
+}
+
+// Медицинские анкеты/формы
+model Form {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  answers   Json     // JSON с ответами на анкету
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Связи
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  files           File[]
+  recommendations Recommendation[]
+  consultations   Consultation[]
+
+  @@map("forms")
+}
+
+// Загруженные файлы (медицинские документы, анализы)
+model File {
+  id         String   @id @default(cuid())
+  formId     String   @map("form_id")
+  filename   String   // Оригинальное имя файла
+  path       String   // Путь к файлу на сервере
+  mimetype   String   // MIME тип файла
+  size       Int      // Размер файла в байтах
+  uploadedAt DateTime @default(now()) @map("uploaded_at")
+
+  // Связи
+  form Form @relation(fields: [formId], references: [id], onDelete: Cascade)
+
+  @@map("files")
+}
+
+// ИИ-рекомендации
+model Recommendation {
+  id          String   @id @default(cuid())
+  formId      String   @map("form_id")
+  name        String   // Название рекомендации
+  dose        String   // Дозировка (например: "1 капсула 2 раза в день")
+  duration    String   // Длительность приема (например: "1 месяц")
+  description String?  // Дополнительное описание
+  confidence  Float    @default(0.0) // Уверенность ИИ в рекомендации (0-1)
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  // Связи
+  form Form @relation(fields: [formId], references: [id], onDelete: Cascade)
+
+  @@map("recommendations")
+}
+
+
+
+// Системные логи
+model SystemLog {
+  id        String   @id @default(cuid())
+  level     String   // INFO, WARN, ERROR, DEBUG
+  message   String
+  metadata  Json?    // Дополнительные данные
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("system_logs")
+}
+
+// Настройки системы
+model SystemSettings {
+  id        String   @id @default(cuid())
+  key       String   @unique // Ключ настройки
+  value     String   // Значение настройки
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("system_settings")
+} 
