@@ -14,7 +14,7 @@ ENV NPM_CONFIG_FUND=false
 COPY package*.json ./
 
 # Устанавливаем зависимости
-RUN npm install --production=false
+RUN npm install --no-audit --no-fund
 
 # Копируем исходный код
 COPY . .
