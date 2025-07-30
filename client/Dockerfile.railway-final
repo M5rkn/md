@@ -1,0 +1,32 @@
+# Финальный Dockerfile для Railway Frontend
+FROM node:18-alpine
+
+# Устанавливаем рабочую директорию
+WORKDIR /app
+
+# Устанавливаем переменные окружения
+ENV CI=false
+ENV NODE_ENV=production
+ENV NPM_CONFIG_AUDIT=false
+ENV NPM_CONFIG_FUND=false
+
+# Копируем package.json и package-lock.json
+COPY package*.json ./
+
+# Устанавливаем зависимости
+RUN npm install --production=false
+
+# Копируем исходный код
+COPY . .
+
+# Собираем приложение
+RUN npm run build
+
+# Устанавливаем serve глобально
+RUN npm install -g serve
+
+# Открываем порт
+EXPOSE 3000
+
+# Запускаем приложение
+CMD ["serve", "-s", "build", "-l", "3000"] 
