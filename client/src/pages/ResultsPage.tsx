@@ -10,10 +10,7 @@ import {
   CheckCircle,
   Clock,
   Star,
-  Calendar,
-  ShoppingCart,
-  Plus,
-  Minus
+  Calendar
 } from 'lucide-react';
 
 // Интерфейсы для результатов

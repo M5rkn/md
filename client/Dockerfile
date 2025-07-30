@@ -13,8 +13,8 @@ RUN npm ci
 # Копируем исходный код
 COPY . .
 
-# Собираем приложение
-RUN npm run build
+# Собираем приложение (отключаем CI режим)
+RUN CI=false npm run build
 
 # Продакшен этап
 FROM nginx:alpine

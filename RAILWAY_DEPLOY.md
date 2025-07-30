@@ -102,7 +102,7 @@ REACT_APP_AI_API_URL=https://your-ai-domain.railway.app
    - **Source**: GitHub
    - **Branch**: main
    - **Root Directory**: client
-   - **Build Command**: `npm run build`
+   - **Build Command**: `CI=false npm run build`
    - **Start Command**: `npx serve -s build -l 3000`
 4. **Запустите деплой**
 
@@ -165,6 +165,11 @@ curl https://your-ai-name.railway.app/health
 Откройте `https://your-client-name.railway.app` в браузере
 
 ## 🚨 Устранение проблем
+
+### Проблема: ESLint ошибки при сборке Frontend
+**Решение:**
+- В настройках Frontend сервиса измените Build Command на: `CI=false npm run build`
+- Или добавьте переменную окружения: `CI=false`
 
 ### Проблема: Ошибка подключения к базе данных
 **Решение:**

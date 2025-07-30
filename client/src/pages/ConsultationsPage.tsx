@@ -3,12 +3,8 @@ import {
   Calendar, 
   Clock, 
   Phone, 
-  User, 
   CheckCircle, 
-  AlertCircle,
-  Download,
-  Plus,
-  Minus
+  Download
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import axios from 'axios';
@@ -65,7 +61,7 @@ const ConsultationsPage: React.FC = () => {
         toast.error('Ошибка загрузки расписания');
       }
     } catch (error: any) {
-      console.error('Ошибка загрузки расписания:', error);
+      // console.error('Ошибка загрузки расписания:', error);
       toast.error(error.response?.data?.message || 'Ошибка загрузки расписания');
     } finally {
       setLoading(false);

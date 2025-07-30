@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { User, Brain, FileText, Award, TrendingUp, Clock, RefreshCw, AlertCircle, Phone, Check, Send } from 'lucide-react';
+import { User, Brain, FileText, TrendingUp, Clock, RefreshCw, AlertCircle, Phone, Check, Send } from 'lucide-react';
 import axios from 'axios';
 import { useAuth } from '../hooks/useAuth';
 import { toast } from 'react-hot-toast';

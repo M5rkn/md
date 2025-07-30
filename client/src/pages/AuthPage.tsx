@@ -13,7 +13,6 @@ import {
   Heart, 
   Activity,
   Shield,
-  Sparkles,
   ArrowRight,
   CheckCircle,
   Phone
