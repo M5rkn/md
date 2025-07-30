@@ -13,8 +13,8 @@ ENV NPM_CONFIG_FUND=false
 # Копируем package.json и package-lock.json
 COPY package*.json ./
 
-# Устанавливаем зависимости
-RUN npm install --no-audit --no-fund
+# Устанавливаем зависимости (включая devDependencies для сборки)
+RUN npm install --no-audit --no-fund --include=dev
 
 # Копируем исходный код
 COPY . .
