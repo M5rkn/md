@@ -71,7 +71,7 @@ const ResultsPage: React.FC = () => {
         throw new Error(response.data.message || 'Ошибка загрузки результатов');
       }
     } catch (error: any) {
-      console.error('Ошибка загрузки результатов:', error);
+      // console.error('Ошибка загрузки результатов:', error);
       if (error.response?.status === 401) {
         toast.error('Сессия истекла');
         navigate('/auth');

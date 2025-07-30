@@ -25,7 +25,7 @@ interface DaySchedule {
 }
 
 const ConsultationsPage: React.FC = () => {
-  const { user } = useAuth();
+  // // const { user } = useAuth();
   const [selectedDate, setSelectedDate] = useState<string>('');
   const [selectedTime, setSelectedTime] = useState<string>('');
   const [isBooking, setIsBooking] = useState(false);
@@ -61,7 +61,7 @@ const ConsultationsPage: React.FC = () => {
         toast.error('Ошибка загрузки расписания');
       }
     } catch (error: any) {
-      // console.error('Ошибка загрузки расписания:', error);
+      // // console.error('Ошибка загрузки расписания:', error);
       toast.error(error.response?.data?.message || 'Ошибка загрузки расписания');
     } finally {
       setLoading(false);
@@ -114,7 +114,7 @@ const ConsultationsPage: React.FC = () => {
         toast.error(response.data.message || 'Ошибка записи на консультацию');
       }
     } catch (error: any) {
-      console.error('Ошибка записи:', error);
+      // // console.error('Ошибка записи:', error);
       toast.error(error.response?.data?.message || 'Ошибка записи на консультацию');
     } finally {
       setIsBooking(false);

@@ -117,7 +117,7 @@ const SurveyPage: React.FC = () => {
   const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
-      console.log('📝 Отправляем анкету:', formData);
+      // console.log('📝 Отправляем анкету:', formData);
       
       const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
       const token = localStorage.getItem('token');
@@ -136,7 +136,7 @@ const SurveyPage: React.FC = () => {
         timeout: 60000
       });
 
-      console.log('✅ Ответ сервера:', response.data);
+      // console.log('✅ Ответ сервера:', response.data);
 
       if (response.data.success) {
         toast.success('Анкета успешно отправлена!');
@@ -145,7 +145,7 @@ const SurveyPage: React.FC = () => {
         toast.error(response.data.message || 'Ошибка при отправке анкеты');
       }
     } catch (error: any) {
-      console.error('💥 Ошибка отправки анкеты:', error);
+      // console.error('💥 Ошибка отправки анкеты:', error);
       toast.error(error.response?.data?.message || 'Ошибка при отправке анкеты');
     } finally {
       setIsSubmitting(false);
@@ -361,7 +361,7 @@ const SurveyPage: React.FC = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Страна проживания
                 </label>
-                <input
+                      <input
                   type="text"
                   value={formData.country}
                   onChange={(e) => handleInputChange('country', e.target.value)}
@@ -373,8 +373,8 @@ const SurveyPage: React.FC = () => {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Город проживания
-                </label>
-                <input
+                    </label>
+                      <input
                   type="text"
                   value={formData.city}
                   onChange={(e) => handleInputChange('city', e.target.value)}
@@ -751,7 +751,7 @@ const SurveyPage: React.FC = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Пищевая аллергия
                   </label>
-                  <input
+                      <input
                     type="text"
                     value={formData.foodAllergy}
                     onChange={(e) => handleInputChange('foodAllergy', e.target.value)}
@@ -763,7 +763,7 @@ const SurveyPage: React.FC = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Сезонная аллергия
-                  </label>
+                    </label>
                   <input
                     type="text"
                     value={formData.seasonalAllergy}
@@ -811,16 +811,16 @@ const SurveyPage: React.FC = () => {
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         Принимаете оральные контрацептивы
                       </label>
-                      <select
+                <select
                         value={formData.oralContraceptives}
                         onChange={(e) => handleInputChange('oralContraceptives', e.target.value)}
-                        className="input-field"
+                  className="input-field"
                       >
                         <option value="">Выберите ответ</option>
                         <option value="yes">ДА</option>
                         <option value="no">НЕТ</option>
-                      </select>
-                    </div>
+                </select>
+              </div>
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -892,7 +892,7 @@ const SurveyPage: React.FC = () => {
                       // Обработка загрузки файлов
                       const files = e.target.files;
                       if (files) {
-                        console.log('Загружено файлов:', files.length);
+                        // console.log('Загружено файлов:', files.length);
                         // Здесь можно добавить логику загрузки файлов
                       }
                     }}

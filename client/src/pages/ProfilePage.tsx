@@ -113,7 +113,7 @@ const ProfilePage: React.FC = () => {
         });
       }
     } catch (error) {
-      console.error('Ошибка загрузки статистики:', error);
+      // console.error('Ошибка загрузки статистики:', error);
       setError('Не удалось загрузить статистику');
     }
   };
@@ -138,7 +138,7 @@ const ProfilePage: React.FC = () => {
         setUserProfile(response.data.user);
       }
     } catch (error) {
-      console.error('Ошибка загрузки профиля:', error);
+      // console.error('Ошибка загрузки профиля:', error);
       setError('Не удалось загрузить профиль');
     }
   };
@@ -163,7 +163,7 @@ const ProfilePage: React.FC = () => {
         setForms(response.data.forms);
       }
     } catch (error) {
-      console.error('Ошибка загрузки всех форм:', error);
+      // console.error('Ошибка загрузки всех форм:', error);
       setError('Не удалось загрузить формы');
     }
   };
@@ -188,7 +188,7 @@ const ProfilePage: React.FC = () => {
         setAnalyses(response.data.analyses);
       }
     } catch (error) {
-      console.error('Ошибка загрузки анализов:', error);
+      // console.error('Ошибка загрузки анализов:', error);
       setError('Не удалось загрузить анализы');
     }
   };
@@ -232,7 +232,7 @@ const ProfilePage: React.FC = () => {
         toast.error(response.data.message || 'Ошибка при повторной отправке анализа');
       }
     } catch (error: any) {
-      console.error('Ошибка повторной отправки:', error);
+      // console.error('Ошибка повторной отправки:', error);
       if (error.response?.data?.message) {
         toast.error(error.response.data.message);
       } else {
@@ -276,7 +276,7 @@ const ProfilePage: React.FC = () => {
         toast.error(response.data.message || 'Ошибка при добавлении телефона');
       }
     } catch (error: any) {
-      console.error('Ошибка добавления телефона:', error);
+      // console.error('Ошибка добавления телефона:', error);
       if (error.response?.data?.message) {
         toast.error(error.response.data.message);
       } else {
@@ -317,7 +317,7 @@ const ProfilePage: React.FC = () => {
         toast.error(response.data.message || 'Ошибка при отправке SMS');
       }
     } catch (error: any) {
-      console.error('Ошибка отправки SMS:', error);
+      // console.error('Ошибка отправки SMS:', error);
       if (error.response?.data?.message) {
         toast.error(error.response.data.message);
       } else {
@@ -362,7 +362,7 @@ const ProfilePage: React.FC = () => {
         toast.error(response.data.message || 'Неверный SMS код');
       }
     } catch (error: any) {
-      console.error('Ошибка подтверждения SMS:', error);
+      // console.error('Ошибка подтверждения SMS:', error);
       if (error.response?.data?.message) {
         toast.error(error.response.data.message);
       } else {
@@ -397,7 +397,7 @@ const ProfilePage: React.FC = () => {
     
     if (hasPendingForms) {
       const interval = setInterval(() => {
-        console.log('🔄 Проверяем обновления pending анализов...');
+        // console.log('🔄 Проверяем обновления pending анализов...');
         refreshData();
       }, 30000); // 30 секунд
 
