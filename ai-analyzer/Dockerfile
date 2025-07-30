@@ -1,4 +1,4 @@
-# Используем Python 3.11
+# AI Service Dockerfile
 FROM python:3.11-slim
 
 # Устанавливаем рабочую директорию
