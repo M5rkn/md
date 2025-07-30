@@ -1,0 +1,32 @@
+# Простой Dockerfile для Railway
+FROM node:18-alpine
+
+# Устанавливаем рабочую директорию
+WORKDIR /app
+
+# Устанавливаем переменные окружения
+ENV CI=false
+ENV GENERATE_SOURCEMAP=false
+ENV NODE_ENV=production
+ENV PORT=3000
+
+# Копируем package.json и package-lock.json
+COPY package*.json ./
+
+# Устанавливаем зависимости
+RUN npm ci
+
+# Копируем исходный код
+COPY . .
+
+# Собираем приложение
+RUN npm run build
+
+# Устанавливаем serve для запуска статических файлов
+RUN npm install -g serve
+
+# Открываем порт
+EXPOSE 3000
+
+# Запускаем приложение
+CMD ["serve", "-s", "build", "-l", "3000"] 

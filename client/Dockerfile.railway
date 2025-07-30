@@ -1,4 +1,4 @@
-# Этап сборки
+# Этап сборки для Railway
 FROM node:18-alpine AS builder
 
 # Устанавливаем рабочую директорию
@@ -7,17 +7,18 @@ WORKDIR /app
 # Устанавливаем переменные окружения для отключения CI режима
 ENV CI=false
 ENV GENERATE_SOURCEMAP=false
+ENV NODE_ENV=production
 
 # Копируем package.json и package-lock.json
 COPY package*.json ./
 
 # Устанавливаем зависимости
-RUN npm ci
+RUN npm ci --only=production
 
 # Копируем исходный код
 COPY . .
 
-# Собираем приложение (CI=false отключен через ENV)
+# Собираем приложение
 RUN npm run build
 
 # Продакшен этап

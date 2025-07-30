@@ -32,6 +32,7 @@ DEBUG=false
 ```env
 REACT_APP_API_URL=https://your-server-domain.railway.app/api
 REACT_APP_AI_API_URL=https://your-ai-domain.railway.app
+CI=false
 ```
 
 ## 🚀 Пошаговый деплой
@@ -97,13 +98,15 @@ REACT_APP_AI_API_URL=https://your-ai-domain.railway.app
    ```env
    REACT_APP_API_URL=https://your-server-domain.railway.app/api
    REACT_APP_AI_API_URL=https://your-ai-domain.railway.app
+   CI=false
    ```
 3. **Настройте деплой**:
    - **Source**: GitHub
    - **Branch**: main
    - **Root Directory**: client
-   - **Build Command**: `CI=false npm run build`
+   - **Build Command**: `npm run build`
    - **Start Command**: `npx serve -s build -l 3000`
+   - **Dockerfile Path**: `client/Dockerfile.simple` (опционально)
 4. **Запустите деплой**
 
 ## 🔧 Настройка доменов
@@ -168,8 +171,16 @@ curl https://your-ai-name.railway.app/health
 
 ### Проблема: ESLint ошибки при сборке Frontend
 **Решение:**
-- В настройках Frontend сервиса измените Build Command на: `CI=false npm run build`
-- Или добавьте переменную окружения: `CI=false`
+- Добавьте переменную окружения: `CI=false`
+- Или используйте Build Command: `CI=false npm run build`
+- Или используйте Dockerfile: `client/Dockerfile.simple`
+
+### Проблема: Docker build failed
+**Решение:**
+1. Проверьте, что используется правильный Root Directory: `client`
+2. Убедитесь, что Build Command: `npm run build`
+3. Добавьте переменную окружения: `CI=false`
+4. Попробуйте использовать Dockerfile: `client/Dockerfile.simple`
 
 ### Проблема: Ошибка подключения к базе данных
 **Решение:**
